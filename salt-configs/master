@@ -1,0 +1,25 @@
+
+# The address of the interface to bind to:
+interface: 0.0.0.0
+
+# Example:
+# file_roots:
+#   base:
+#     - /srv/salt/
+#   dev:
+#     - /srv/salt/dev/services
+#     - /srv/salt/dev/states
+#   prod:
+#     - /srv/salt/prod/services
+#     - /srv/salt/prod/states
+#
+
+auto_accept: True
+
+file_roots:
+  base:
+    - /srv/salt
+
+renderer: jinja | yaml | gpg
+
+
