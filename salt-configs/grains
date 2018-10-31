@@ -1,0 +1,9 @@
+# path of file by default: /etc/salt/grains
+
+lob: samindersaltmaster
+code: 5413
+roles:
+ - webserver
+ - memcache
+
+# precedence: core grains >/etc/salt/grains > /etc/salt/minion > _grains directory

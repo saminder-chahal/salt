@@ -1,0 +1,6 @@
+master: localhost
+
+# can also contain grains(static variables here)
+grains:
+  deployment: datacenter
+  cabinet: 13
