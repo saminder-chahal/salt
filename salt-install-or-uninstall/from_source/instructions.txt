@@ -1,0 +1,9 @@
+curl -L https://bootstrap.saltstack.com -o install_salt.sh
+
+To install saltminon: sudo sh install_salt -P  
+
+To install saltmaster only:  sudo sh install_salt -P -M -N
+
+
+-M means:  master
+-N means: no salt-minion

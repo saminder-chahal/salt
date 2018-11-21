@@ -1,0 +1,35 @@
+Install the Latest Salt on Debian 9
+
+
+Set the hostname to salt; update /etc/hosts to use the hostname salt:
+
+ sudo hostnamectl set-hostname salt
+ sudo $EDITOR /etc/hosts
+Note that, by default, Salt looks for a master named salt.
+
+
+
+Import the repository key:
+
+ wget -O - https://repo.saltstack.com/apt/debian/9/amd64/archive/2018.3.0/SALTSTACK-GPG-KEY.pub | sudo apt-key add -
+
+
+
+Add the SaltStack repository into your repository list:
+
+ sudo $EDITOR /etc/apt/sources.list.d/saltstack.list
+
+ deb http://repo.saltstack.com/apt/debian/9/amd64/archive/2018.3.0 stretch main
+
+
+
+Run an update:
+
+ sudo apt-get update
+
+
+
+Install Salt components:
+
+ sudo apt-get install salt-master salt-minion
+

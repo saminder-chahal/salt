@@ -1,0 +1,2 @@
+PREFFERED_WAY
+salt service added properly under INIT.d startup scripts to run the deamon on reboot by default
