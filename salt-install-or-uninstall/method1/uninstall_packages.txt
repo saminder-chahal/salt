@@ -1,0 +1,6 @@
+apt-get -y remove salt-api
+apt-get -y remove salt-cloud
+apt-get -y remove salt-master
+apt-get -y remove salt-minion
+apt-get -y remove salt-ssh
+apt-get -y remove salt-syndic
