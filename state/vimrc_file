@@ -1,0 +1,13 @@
+# salt files should be saved under file_roots Then that file can be referenced using source == salt://<file_name_path>
+
+set softtabstop=2
+set tabstop=2
+set shiftwidth=2
+set expandtab
+retab
+
+"Pathogen load
+filetype plugin indent on
+syntax on
+
+# to call it using salt --> salt 'salt' cp.get_file salt://vimrc ~/.vimrc runas=user
