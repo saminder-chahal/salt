@@ -1,0 +1,816 @@
+pkg.add_repo_key:
+
+    New in version 2017.7.0
+
+    Add a repo key using ``apt-key add``.
+
+    :param str path: The path of the key file to import.
+    :param str text: The key data to import, in string form.
+    :param str keyserver: The server to download the repo key specified by the keyid.
+    :param str keyid: The key id of the repo key to add.
+    :param str saltenv: The environment the key file resides in.
+
+    :return: A boolean representing whether the repo key was added.
+    :rtype: bool
+
+    CLI Examples:
+
+        salt '*' pkg.add_repo_key 'salt://apt/sources/test.key'
+
+        salt '*' pkg.add_repo_key text="'$KEY1'"
+
+        salt '*' pkg.add_repo_key keyserver='keyserver.example' keyid='0000AAAA'
+    
+
+pkg.autoremove:
+
+    New in version 2015.5.0
+
+    Remove packages not required by another package using ``apt-get
+    autoremove``.
+
+    list_only : False
+        Only retrieve the list of packages to be auto-removed, do not actually
+        perform the auto-removal.
+
+    purge : False
+        Also remove package config data when autoremoving packages.
+
+        New in version 2015.8.0
+
+    CLI Example:
+
+        salt '*' pkg.autoremove
+        salt '*' pkg.autoremove list_only=True
+        salt '*' pkg.autoremove purge=True
+    
+
+pkg.available_version:
+
+This function is an alias of ``latest_version``.
+
+    Return the latest version of the named package available for upgrade or
+    installation. If more than one package name is specified, a dict of
+    name/version pairs is returned.
+
+    If the latest version of a given package is already installed, an empty
+    string will be returned for that package.
+
+    A specific repo can be requested using the ``fromrepo`` keyword argument.
+
+    cache_valid_time
+
+        New in version 2016.11.0
+
+        Skip refreshing the package database if refresh has already occurred within
+        <value> seconds
+
+    CLI Example:
+
+        salt '*' pkg.latest_version <package name>
+        salt '*' pkg.latest_version <package name> fromrepo=unstable
+        salt '*' pkg.latest_version <package1> <package2> <package3> ...
+    
+
+pkg.del_repo:
+
+    Delete a repo from the sources.list / sources.list.d
+
+    If the .list file is in the sources.list.d directory
+    and the file that the repo exists in does not contain any other
+    repo configuration, the file itself will be deleted.
+
+    The repo passed in must be a fully formed repository definition
+    string.
+
+    CLI Examples:
+
+        salt '*' pkg.del_repo "myrepo definition"
+    
+
+pkg.del_repo_key:
+
+    New in version 2015.8.0
+
+    Remove a repo key using ``apt-key del``
+
+    name
+        Repo from which to remove the key. Unnecessary if ``keyid`` is passed.
+
+    keyid
+        The KeyID of the GPG key to remove
+
+    keyid_ppa : False
+        If set to ``True``, the repo's GPG key ID will be looked up from
+        ppa.launchpad.net and removed.
+
+        Note:
+
+            Setting this option to ``True`` requires that the ``name`` param
+            also be passed.
+
+    CLI Examples:
+
+        salt '*' pkg.del_repo_key keyid=0123ABCD
+        salt '*' pkg.del_repo_key name='ppa:foo/bar' keyid_ppa=True
+    
+
+pkg.expand_repo_def:
+
+    Take a repository definition and expand it to the full pkg repository dict
+    that can be used for comparison.  This is a helper function to make
+    the Debian/Ubuntu apt sources sane for comparison in the pkgrepo states.
+
+    This is designed to be called from pkgrepo states and will have little use
+    being called on the CLI.
+    
+
+pkg.file_dict:
+
+    List the files that belong to a package, grouped by package. Not
+    specifying any packages will return a list of _every_ file on the system's
+    package database (not generally recommended).
+
+    CLI Examples:
+
+        salt '*' pkg.file_dict httpd
+        salt '*' pkg.file_dict httpd postfix
+        salt '*' pkg.file_dict
+    
+
+pkg.file_list:
+
+    List the files that belong to a package. Not specifying any packages will
+    return a list of _every_ file on the system's package database (not
+    generally recommended).
+
+    CLI Examples:
+
+        salt '*' pkg.file_list httpd
+        salt '*' pkg.file_list httpd postfix
+        salt '*' pkg.file_list
+    
+
+pkg.get_repo:
+
+    Display a repo from the sources.list / sources.list.d
+
+    The repo passed in needs to be a complete repo entry.
+
+    CLI Examples:
+
+        salt '*' pkg.get_repo "myrepo definition"
+    
+
+pkg.get_repo_keys:
+
+    New in version 2017.7.0
+
+    List known repo key details.
+
+    :return: A dictionary containing the repo keys.
+    :rtype: dict
+
+    CLI Examples:
+
+        salt '*' pkg.get_repo_keys
+    
+
+pkg.get_selections:
+
+    View package state from the dpkg database.
+
+    Returns a dict of dicts containing the state, and package names:
+
+        {'<host>':
+            {'<state>': ['pkg1',
+                         ...
+                        ]
+            },
+            ...
+        }
+
+    CLI Example:
+
+        salt '*' pkg.get_selections
+        salt '*' pkg.get_selections 'python-*'
+        salt '*' pkg.get_selections state=hold
+        salt '*' pkg.get_selections 'openssh*' state=hold
+    
+
+pkg.hold:
+
+    New in version 2014.7.0
+
+    Set package in 'hold' state, meaning it will not be upgraded.
+
+    name
+        The name of the package, e.g., 'tmux'
+
+        CLI Example:
+
+            salt '*' pkg.hold <package name>
+
+    pkgs
+        A list of packages to hold. Must be passed as a python list.
+
+        CLI Example:
+
+            salt '*' pkg.hold pkgs='["foo", "bar"]'
+    
+
+pkg.info_installed:
+
+    Return the information of the named package(s) installed on the system.
+
+    New in version 2015.8.1
+
+    names
+        The names of the packages for which to return information.
+
+    failhard
+        Whether to throw an exception if none of the packages are installed.
+        Defaults to True.
+
+        New in version 2016.11.3
+
+    CLI example:
+
+        salt '*' pkg.info_installed <package1>
+        salt '*' pkg.info_installed <package1> <package2> <package3> ...
+        salt '*' pkg.info_installed <package1> failhard=false
+    
+
+pkg.install:
+
+    Changed in version 2015.8.12,2016.3.3,2016.11.0
+        On minions running systemd>=205, `systemd-run(1)`_ is now used to
+        isolate commands which modify installed packages from the
+        ``salt-minion`` daemon's control group. This is done to keep systemd
+        from killing any apt-get/dpkg commands spawned by Salt when the
+        ``salt-minion`` service is restarted. (see ``KillMode`` in the
+        `systemd.kill(5)`_ manpage for more information). If desired, usage of
+        `systemd-run(1)`_ can be suppressed by setting a :mod:`config option
+        <salt.modules.config.get>` called ``systemd.scope``, with a value of
+        ``False`` (no quotes).
+
+    .. _`systemd-run(1)`: https://www.freedesktop.org/software/systemd/man/systemd-run.html
+    .. _`systemd.kill(5)`: https://www.freedesktop.org/software/systemd/man/systemd.kill.html
+
+    Install the passed package, add refresh=True to update the dpkg database.
+
+    name
+        The name of the package to be installed. Note that this parameter is
+        ignored if either "pkgs" or "sources" is passed. Additionally, please
+        note that this option can only be used to install packages from a
+        software repository. To install a package file manually, use the
+        "sources" option.
+
+        32-bit packages can be installed on 64-bit systems by appending the
+        architecture designation (``:i386``, etc.) to the end of the package
+        name.
+
+        CLI Example:
+
+            salt '*' pkg.install <package name>
+
+    refresh
+        Whether or not to refresh the package database before installing.
+
+    cache_valid_time
+
+        New in version 2016.11.0
+
+        Skip refreshing the package database if refresh has already occurred within
+        <value> seconds
+
+    fromrepo
+        Specify a package repository to install from
+        (e.g., ``apt-get -t unstable install somepackage``)
+
+    skip_verify
+        Skip the GPG verification check (e.g., ``--allow-unauthenticated``, or
+        ``--force-bad-verify`` for install from package file).
+
+    debconf
+        Provide the path to a debconf answers file, processed before
+        installation.
+
+    version
+        Install a specific version of the package, e.g. 1.2.3~0ubuntu0. Ignored
+        if "pkgs" or "sources" is passed.
+
+    reinstall : False
+        Specifying reinstall=True will use ``apt-get install --reinstall``
+        rather than simply ``apt-get install`` for requested packages that are
+        already installed.
+
+        If a version is specified with the requested package, then ``apt-get
+        install --reinstall`` will only be used if the installed version
+        matches the requested version.
+
+        New in version 2015.8.0
+
+
+    Multiple Package Installation Options:
+
+    pkgs
+        A list of packages to install from a software repository. Must be
+        passed as a python list.
+
+        CLI Example:
+
+            salt '*' pkg.install pkgs='["foo", "bar"]'
+            salt '*' pkg.install pkgs='["foo", {"bar": "1.2.3-0ubuntu0"}]'
+
+    sources
+        A list of DEB packages to install. Must be passed as a list of dicts,
+        with the keys being package names, and the values being the source URI
+        or local path to the package.  Dependencies are automatically resolved
+        and marked as auto-installed.
+
+        32-bit packages can be installed on 64-bit systems by appending the
+        architecture designation (``:i386``, etc.) to the end of the package
+        name.
+
+        Changed in version 2014.7.0
+
+        CLI Example:
+
+            salt '*' pkg.install sources='[{"foo": "salt://foo.deb"},{"bar": "salt://bar.deb"}]'
+
+    force_yes
+        Passes ``--force-yes`` to the apt-get command.  Don't use this unless
+        you know what you're doing.
+
+        New in version 0.17.4
+
+    install_recommends
+        Whether to install the packages marked as recommended.  Default is True.
+
+        New in version 2015.5.0
+
+    only_upgrade
+        Only upgrade the packages, if they are already installed. Default is False.
+
+        New in version 2015.5.0
+
+    force_conf_new
+        Always install the new version of any configuration files.
+
+        New in version 2015.8.0
+
+    Returns a dict containing the new package names and versions::
+
+        {'<package>': {'old': '<old-version>',
+                       'new': '<new-version>'}}
+    
+
+pkg.latest_version:
+
+    Return the latest version of the named package available for upgrade or
+    installation. If more than one package name is specified, a dict of
+    name/version pairs is returned.
+
+    If the latest version of a given package is already installed, an empty
+    string will be returned for that package.
+
+    A specific repo can be requested using the ``fromrepo`` keyword argument.
+
+    cache_valid_time
+
+        New in version 2016.11.0
+
+        Skip refreshing the package database if refresh has already occurred within
+        <value> seconds
+
+    CLI Example:
+
+        salt '*' pkg.latest_version <package name>
+        salt '*' pkg.latest_version <package name> fromrepo=unstable
+        salt '*' pkg.latest_version <package1> <package2> <package3> ...
+    
+
+pkg.list_pkgs:
+
+    List the packages currently installed in a dict::
+
+        {'<package_name>': '<version>'}
+
+    removed
+        If ``True``, then only packages which have been removed (but not
+        purged) will be returned.
+
+    purge_desired
+        If ``True``, then only packages which have been marked to be purged,
+        but can't be purged due to their status as dependencies for other
+        installed packages, will be returned. Note that these packages will
+        appear in installed
+
+        Changed in version 2014.1.1
+
+            Packages in this state now correctly show up in the output of this
+            function.
+
+    Note: External dependencies
+
+        Virtual package resolution requires the ``dctrl-tools`` package to be
+        installed. Virtual packages will show a version of ``1``.
+
+    CLI Example:
+
+        salt '*' pkg.list_pkgs
+        salt '*' pkg.list_pkgs versions_as_list=True
+    
+
+pkg.list_repo_pkgs:
+
+    New in version 2017.7.0
+
+    Returns all available packages. Optionally, package names (and name globs)
+    can be passed and the results will be filtered to packages matching those
+    names.
+
+    This function can be helpful in discovering the version or repo to specify
+    in a :mod:`pkg.installed <salt.states.pkg.installed>` state.
+
+    The return data will be a dictionary mapping package names to a list of
+    version numbers, ordered from newest to oldest. For example:
+
+        {
+            'bash': ['4.3-14ubuntu1.1',
+                     '4.3-14ubuntu1'],
+            'nginx': ['1.10.0-0ubuntu0.16.04.4',
+                      '1.9.15-0ubuntu1']
+        }
+
+    CLI Examples:
+
+        salt '*' pkg.list_repo_pkgs
+        salt '*' pkg.list_repo_pkgs foo bar baz
+    
+
+pkg.list_repos:
+
+    Lists all repos in the sources.list (and sources.lists.d) files
+
+    CLI Example:
+
+       salt '*' pkg.list_repos
+       salt '*' pkg.list_repos disabled=True
+    
+
+pkg.list_upgrades:
+
+    List all available package upgrades.
+
+    refresh
+        Whether to refresh the package database before listing upgrades.
+        Default: True.
+
+    cache_valid_time
+
+        New in version 2016.11.0
+
+        Skip refreshing the package database if refresh has already occurred within
+        <value> seconds
+
+    dist_upgrade
+        Whether to list the upgrades using dist-upgrade vs upgrade.  Default is
+        to use dist-upgrade.
+
+    CLI Example:
+
+        salt '*' pkg.list_upgrades
+    
+
+pkg.mod_repo:
+
+    Modify one or more values for a repo.  If the repo does not exist, it will
+    be created, so long as the definition is well formed.  For Ubuntu the
+    ``ppa:<project>/repo`` format is acceptable. ``ppa:`` format can only be
+    used to create a new repository.
+
+    The following options are available to modify a repo definition:
+
+        architectures
+            a comma separated list of supported architectures, e.g. ``amd64``
+            If this option is not set, all architectures (configured in the
+            system) will be used.
+
+        architectures
+            a comma separated list of supported architectures, e.g. ``amd64``
+            If this option is not set, all architectures (configured in the
+            system) will be used.
+
+        comps
+            a comma separated list of components for the repo, e.g. ``main``
+
+        file
+            a file name to be used
+
+        keyserver
+            keyserver to get gpg key from
+
+        keyid
+            key id to load with the keyserver argument
+
+        key_url
+            URL to a GPG key to add to the APT GPG keyring
+
+        key_text
+            GPG key in string form to add to the APT GPG keyring
+
+        consolidate
+            if ``True``, will attempt to de-dup and consolidate sources
+
+        comments
+            Sometimes you want to supply additional information, but not as
+            enabled configuration. All comments provided here will be joined
+            into a single string and appended to the repo configuration with a
+            comment marker (#) before it.
+
+            New in version 2015.8.9
+
+        Note: Due to the way keys are stored for APT, there is a known issue
+                where the key won't be updated unless another change is made
+                at the same time.  Keys should be properly added on initial
+                configuration.
+
+    CLI Examples:
+
+        salt '*' pkg.mod_repo 'myrepo definition' uri=http://new/uri
+        salt '*' pkg.mod_repo 'myrepo definition' comps=main,universe
+    
+
+pkg.owner:
+
+    New in version 2014.7.0
+
+    Return the name of the package that owns the file. Multiple file paths can
+    be passed. Like :mod:`pkg.version <salt.modules.aptpkg.version>`, if a
+    single path is passed, a string will be returned, and if multiple paths are
+    passed, a dictionary of file/package name pairs will be returned.
+
+    If the file is not owned by a package, or is not present on the minion,
+    then an empty string will be returned for that path.
+
+    CLI Example:
+
+        salt '*' pkg.owner /usr/bin/apachectl
+        salt '*' pkg.owner /usr/bin/apachectl /usr/bin/basename
+    
+
+pkg.purge:
+
+    Changed in version 2015.8.12,2016.3.3,2016.11.0
+        On minions running systemd>=205, `systemd-run(1)`_ is now used to
+        isolate commands which modify installed packages from the
+        ``salt-minion`` daemon's control group. This is done to keep systemd
+        from killing any apt-get/dpkg commands spawned by Salt when the
+        ``salt-minion`` service is restarted. (see ``KillMode`` in the
+        `systemd.kill(5)`_ manpage for more information). If desired, usage of
+        `systemd-run(1)`_ can be suppressed by setting a :mod:`config option
+        <salt.modules.config.get>` called ``systemd.scope``, with a value of
+        ``False`` (no quotes).
+
+    .. _`systemd-run(1)`: https://www.freedesktop.org/software/systemd/man/systemd-run.html
+    .. _`systemd.kill(5)`: https://www.freedesktop.org/software/systemd/man/systemd.kill.html
+
+    Remove packages via ``apt-get purge`` along with all configuration files.
+
+    name
+        The name of the package to be deleted.
+
+
+    Multiple Package Options:
+
+    pkgs
+        A list of packages to delete. Must be passed as a python list. The
+        ``name`` parameter will be ignored if this option is passed.
+
+    New in version 0.16.0
+
+
+    Returns a dict containing the changes.
+
+    CLI Example:
+
+        salt '*' pkg.purge <package name>
+        salt '*' pkg.purge <package1>,<package2>,<package3>
+        salt '*' pkg.purge pkgs='["foo", "bar"]'
+    
+
+pkg.refresh_db:
+
+    Updates the APT database to latest packages based upon repositories
+
+    Returns a dict, with the keys being package databases and the values being
+    the result of the update attempt. Values can be one of the following:
+
+    - ``True``: Database updated successfully
+    - ``False``: Problem updating database
+    - ``None``: Database already up-to-date
+
+    cache_valid_time
+
+        New in version 2016.11.0
+
+        Skip refreshing the package database if refresh has already occurred within
+        <value> seconds
+
+    failhard
+
+        If False, return results of Err lines as ``False`` for the package database that
+        encountered the error.
+        If True, raise an error with a list of the package databases that encountered
+        errors.
+
+    CLI Example:
+
+        salt '*' pkg.refresh_db
+    
+
+pkg.remove:
+
+    Changed in version 2015.8.12,2016.3.3,2016.11.0
+        On minions running systemd>=205, `systemd-run(1)`_ is now used to
+        isolate commands which modify installed packages from the
+        ``salt-minion`` daemon's control group. This is done to keep systemd
+        from killing any apt-get/dpkg commands spawned by Salt when the
+        ``salt-minion`` service is restarted. (see ``KillMode`` in the
+        `systemd.kill(5)`_ manpage for more information). If desired, usage of
+        `systemd-run(1)`_ can be suppressed by setting a :mod:`config option
+        <salt.modules.config.get>` called ``systemd.scope``, with a value of
+        ``False`` (no quotes).
+
+    .. _`systemd-run(1)`: https://www.freedesktop.org/software/systemd/man/systemd-run.html
+    .. _`systemd.kill(5)`: https://www.freedesktop.org/software/systemd/man/systemd.kill.html
+
+    Remove packages using ``apt-get remove``.
+
+    name
+        The name of the package to be deleted.
+
+
+    Multiple Package Options:
+
+    pkgs
+        A list of packages to delete. Must be passed as a python list. The
+        ``name`` parameter will be ignored if this option is passed.
+
+    New in version 0.16.0
+
+
+    Returns a dict containing the changes.
+
+    CLI Example:
+
+        salt '*' pkg.remove <package name>
+        salt '*' pkg.remove <package1>,<package2>,<package3>
+        salt '*' pkg.remove pkgs='["foo", "bar"]'
+    
+
+pkg.set_selections:
+
+    Change package state in the dpkg database.
+
+    The state can be any one of, documented in ``dpkg(1)``:
+
+    - install
+    - hold
+    - deinstall
+    - purge
+
+    This command is commonly used to mark specific packages to be held from
+    being upgraded, that is, to be kept at a certain version. When a state is
+    changed to anything but being held, then it is typically followed by
+    ``apt-get -u dselect-upgrade``.
+
+    Note: Be careful with the ``clear`` argument, since it will start
+    with setting all packages to deinstall state.
+
+    Returns a dict of dicts containing the package names, and the new and old
+    versions:
+
+        {'<host>':
+            {'<package>': {'new': '<new-state>',
+                           'old': '<old-state>'}
+            },
+            ...
+        }
+
+    CLI Example:
+
+        salt '*' pkg.set_selections selection='{"install": ["netcat"]}'
+        salt '*' pkg.set_selections selection='{"hold": ["openssh-server", "openssh-client"]}'
+        salt '*' pkg.set_selections salt://path/to/file
+        salt '*' pkg.set_selections salt://path/to/file clear=True
+    
+
+pkg.unhold:
+
+    New in version 2014.7.0
+
+    Set package current in 'hold' state to install state,
+    meaning it will be upgraded.
+
+    name
+        The name of the package, e.g., 'tmux'
+
+        CLI Example:
+
+            salt '*' pkg.unhold <package name>
+
+    pkgs
+        A list of packages to hold. Must be passed as a python list.
+
+        CLI Example:
+
+            salt '*' pkg.unhold pkgs='["foo", "bar"]'
+    
+
+pkg.upgrade:
+
+    Changed in version 2015.8.12,2016.3.3,2016.11.0
+        On minions running systemd>=205, `systemd-run(1)`_ is now used to
+        isolate commands which modify installed packages from the
+        ``salt-minion`` daemon's control group. This is done to keep systemd
+        from killing any apt-get/dpkg commands spawned by Salt when the
+        ``salt-minion`` service is restarted. (see ``KillMode`` in the
+        `systemd.kill(5)`_ manpage for more information). If desired, usage of
+        `systemd-run(1)`_ can be suppressed by setting a :mod:`config option
+        <salt.modules.config.get>` called ``systemd.scope``, with a value of
+        ``False`` (no quotes).
+
+    .. _`systemd-run(1)`: https://www.freedesktop.org/software/systemd/man/systemd-run.html
+    .. _`systemd.kill(5)`: https://www.freedesktop.org/software/systemd/man/systemd.kill.html
+
+    Upgrades all packages via ``apt-get upgrade`` or ``apt-get dist-upgrade``
+    if  ``dist_upgrade`` is ``True``.
+
+    Returns a dictionary containing the changes:
+
+        {'<package>':  {'old': '<old-version>',
+                        'new': '<new-version>'}}
+
+    dist_upgrade
+        Whether to perform the upgrade using dist-upgrade vs upgrade.  Default
+        is to use upgrade.
+
+        New in version 2014.7.0
+
+    cache_valid_time
+
+        New in version 2016.11.0
+
+        Skip refreshing the package database if refresh has already occurred within
+        <value> seconds
+
+    force_conf_new
+        Always install the new version of any configuration files.
+
+        New in version 2015.8.0
+
+    CLI Example:
+
+        salt '*' pkg.upgrade
+    
+
+pkg.upgrade_available:
+
+    Check whether or not an upgrade is available for a given package
+
+    CLI Example:
+
+        salt '*' pkg.upgrade_available <package name>
+    
+
+pkg.version:
+
+    Returns a string representing the package version or an empty string if not
+    installed. If more than one package name is specified, a dict of
+    name/version pairs is returned.
+
+    CLI Example:
+
+        salt '*' pkg.version <package name>
+        salt '*' pkg.version <package1> <package2> <package3> ...
+    
+
+pkg.version_cmp:
+
+    Do a cmp-style comparison on two packages. Return -1 if pkg1 < pkg2, 0 if
+    pkg1 == pkg2, and 1 if pkg1 > pkg2. Return None if there was a problem
+    making the comparison.
+
+    ignore_epoch : False
+        Set to ``True`` to ignore the epoch when comparing versions
+
+        New in version 2015.8.10,2016.3.2
+
+    CLI Example:
+
+        salt '*' pkg.version_cmp '0.2.4-0ubuntu1' '0.2.4.1-0ubuntu1'
+    
+
